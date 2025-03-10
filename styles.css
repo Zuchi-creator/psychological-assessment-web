@@ -1,39 +1,26 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-}
-
-h1 {
-    color: #2c3e50;
-}
-
 form {
-    background-color: #ffffff;
-    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 0 auto; /* Center the form */
     padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: inline-block;
-    margin-top: 50px;
+}
+
+ol {
+    list-style-type: decimal; /* This ensures it's an ordered list with numbers */
+    padding-left: 20px; /* Adds space for the numbers */
+}
+
+li {
+    margin-bottom: 20px; /* Adds space between each question */
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
 }
 
 select {
-    padding: 5px;
-    margin: 10px 0;
-}
-
-button {
-    background-color: #3498db;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #2980b9;
+    width: 100%; /* Makes the select box fill the available space */
+    padding: 8px;
 }

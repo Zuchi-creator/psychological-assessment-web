@@ -3,35 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Psychological Assessment</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Psychological Self-Assessment</title>
+    <style>
+        /* Add your CSS here (this can be in the <style> section inside the HTML) */
+        form {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto; /* Center the form */
+            padding: 20px;
+        }
+
+        ol {
+            list-style-type: decimal; /* This ensures it's an ordered list with numbers */
+            padding-left: 20px; /* Adds space for the numbers */
+        }
+
+        li {
+            margin-bottom: 20px; /* Adds space between each question */
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        select {
+            width: 100%; /* Makes the select box fill the available space */
+            padding: 8px;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>Psychological Self-Assessment</h1>
-    <form id="assessmentForm">
-        <label for="question1">How stressed are you?</label>
-        <select id="question1">
-            <option value="1">Not at all</option>
-            <option value="2">A little</option>
-            <option value="3">Moderately</option>
-            <option value="4">Quite a bit</option>
-            <option value="5">Extremely</option>
-        </select>
 
-        <label for="question2">How often do you feel anxious?</label>
-        <select id="question2">
-            <option value="1">Never</option>
-            <option value="2">Rarely</option>
-            <option value="3">Sometimes</option>
-            <option value="4">Often</option>
-            <option value="5">Always</option>
-        </select>
+    <!-- Form with Ordered List of Questions -->
+    <form id="assessmentForm">
+        <ol>
+            <li>
+                <label for="question1">How happy do you feel today?</label>
+                <select id="question1" name="question1">
+                    <option value="1">Not at all</option>
+                    <option value="2">A little</option>
+                    <option value="3">Moderately</option>
+                    <option value="4">Very</option>
+                    <option value="5">Extremely</option>
+                </select>
+            </li>
+
+            <li>
+                <label for="question2">How energetic do you feel right now?</label>
+                <select id="question2" name="question2">
+                    <option value="1">Not at all</option>
+                    <option value="2">A little</option>
+                    <option value="3">Moderately</option>
+                    <option value="4">Very</option>
+                    <option value="5">Extremely</option>
+                </select>
+            </li>
+
+            <li>
+                <label for="question3">Is professor Boldsuren handsome?</label>
+                <select id="question3" name="question1">
+                    <option value="1">Not at all</option>
+                    <option value="2">A little</option>
+                    <option value="3">Moderately</option>
+                    <option value="4">Very</option>
+                    <option value="5">Extremely</option>
+                </select>
+            </li>
+            
+            <li>
+                <label for="question4">Are you a spiderman?</label>
+                <select id="question4" name="question1">
+                    <option value="1">Not at all</option>
+                    <option value="2">A little</option>
+                    <option value="3">Moderately</option>
+                    <option value="4">Very</option>
+                    <option value="5">Extremely</option>
+                </select>
+            </li>
+            
+            <li>
+                <label for="question5">Do you like budaatai huurga?</label>
+                <select id="question5" name="question1">
+                    <option value="1">Not at all</option>
+                    <option value="2">A little</option>
+                    <option value="3">Moderately</option>
+                    <option value="4">Very</option>
+                    <option value="5">Extremely</option>
+                </select>
+            </li>
+            
+            <!-- Add more questions here as needed -->
+
+        </ol>
 
         <button type="submit">Submit</button>
     </form>
 
-    <div id="feedback"></div>
+    <div id="feedback"></div> <!-- This is where the feedback will be displayed -->
 
-    <script src="script.js"></script>
+    <!-- JavaScript to handle form submission and show feedback -->
+    <script>
+        document.getElementById("assessmentForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevents the form from actually submitting and refreshing the page
+
+            // Get the values from the questions
+            const q1Value = parseInt(document.getElementById("question1").value); // Happiness question
+            const q2Value = parseInt(document.getElementById("question2").value); // Energy question
+
+            // Check if both questions have been answered
+            if (isNaN(q1Value) || isNaN(q2Value)) {
+                alert("Please answer all the questions.");
+                return;
+            }
+
+            // Calculate the total score (you can adjust this based on your logic)
+            const totalScore = q1Value + q2Value;
+
+            // Provide feedback based on the score
+            let feedback = "";
+            if (totalScore <= 3) {
+                feedback = "You're feeling quite low on energy and happiness. Try taking some time for self-care.";
+            } else if (totalScore <= 6) {
+                feedback = "You're doing okay but could benefit from some relaxation or a positive activity.";
+            } else if (totalScore <= 10) {
+                feedback = "You're feeling quite positive and energetic. Keep up the great work!";
+            }
+
+            // Show the feedback in the 'feedback' div
+            document.getElementById("feedback").innerText = feedback;
+        });
+    </script>
+
 </body>
 </html>

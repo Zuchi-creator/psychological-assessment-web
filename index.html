@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychological Assessment</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Psychological Self-Assessment</h1>
+    <form id="assessmentForm">
+        <label for="question1">How stressed are you?</label>
+        <select id="question1">
+            <option value="1">Not at all</option>
+            <option value="2">A little</option>
+            <option value="3">Moderately</option>
+            <option value="4">Quite a bit</option>
+            <option value="5">Extremely</option>
+        </select>
+
+        <label for="question2">How often do you feel anxious?</label>
+        <select id="question2">
+            <option value="1">Never</option>
+            <option value="2">Rarely</option>
+            <option value="3">Sometimes</option>
+            <option value="4">Often</option>
+            <option value="5">Always</option>
+        </select>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="feedback"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

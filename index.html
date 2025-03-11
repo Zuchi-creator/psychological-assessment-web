@@ -1,146 +1,297 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="mn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Psychological Self-Assessment</title>
+    <title>Сэтгэл зүйн үнэлгээ</title>
     <style>
-        /* Add your CSS here (this can be in the <style> section inside the HTML) */
-        form {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 0 auto; /* Center the form */
-            padding: 20px;
+        body { font-family: Arial, sans-serif; }
+        .hidden { display: none; }
+        .container { max-width: 600px; margin: auto; padding: 20px; }
+        .question { margin-bottom: 10px; }
+        .scale-options {
+            display: flex;
+            flex-direction: column; /* Stack options vertically */
+            margin-top: 5px;
         }
 
-        ol {
-            list-style-type: decimal; /* This ensures it's an ordered list with numbers */
-            padding-left: 20px; /* Adds space for the numbers */
-        }
-
-        li {
-            margin-bottom: 20px; /* Adds space between each question */
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        select {
-            width: 100%; /* Makes the select box fill the available space */
-            padding: 8px;
-        }
-
-        #feedback {
-            margin-top: 20px;
-            font-size: 1.2em;
-            font-weight: bold;
+        .scale-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Space between radio button and text */
+            margin-bottom: 5px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-
-    <!-- Form with Ordered List of Questions -->
-    <form id="assessmentForm">
-        <ol>
-            <li>
-                <label for="question1">How happy do you feel today?</label>
-                <select id="question1" name="question1">
-                    <option value="1">Not at all</option>
-                    <option value="2">A little</option>
-                    <option value="3">Moderately</option>
-                    <option value="4">Very</option>
-                    <option value="5">Extremely</option>
-                </select>
-            </li>
-
-            <li>
-                <label for="question2">How energetic do you feel right now?</label>
-                <select id="question2" name="question2">
-                    <option value="1">Not at all</option>
-                    <option value="2">A little</option>
-                    <option value="3">Moderately</option>
-                    <option value="4">Very</option>
-                    <option value="5">Extremely</option>
-                </select>
-            </li>
-
-            <li>
-                <label for="question3">Is professor Boldsuren handsome?</label>
-                <select id="question3" name="question1">
-                    <option value="1">Not at all</option>
-                    <option value="2">A little</option>
-                    <option value="3">Moderately</option>
-                    <option value="4">Very</option>
-                    <option value="5">Extremely</option>
-                </select>
-            </li>
-            
-            <li>
-                <label for="question4">Are you a spiderman?</label>
-                <select id="question4" name="question1">
-                    <option value="1">Not at all</option>
-                    <option value="2">A little</option>
-                    <option value="3">Moderately</option>
-                    <option value="4">Very</option>
-                    <option value="5">Extremely</option>
-                </select>
-            </li>
-            
-            <li>
-                <label for="question5">Do you like budaatai huurga?</label>
-                <select id="question5" name="question1">
-                    <option value="1">Not at all</option>
-                    <option value="2">A little</option>
-                    <option value="3">Moderately</option>
-                    <option value="4">Very</option>
-                    <option value="5">Extremely</option>
-                </select>
-            </li>
-            
-            <!-- Add more questions here as needed -->
-
-        </ol>
-
-        <button type="submit">Submit</button>
-    </form>
-
-    <div id="feedback"></div> <!-- This is where the feedback will be displayed -->
-
-    <!-- JavaScript to handle form submission and show feedback -->
+    <div class="container">
+        <h1>Сэтгэл зүйн үнэлгээ</h1>
+        <div id="assessment"></div>
+        <div id="results" class="hidden"></div>
+    </div>
+    
     <script>
-        document.getElementById("assessmentForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // Prevents the form from actually submitting and refreshing the page
-
-            // Get the values from the questions
-            const q1Value = parseInt(document.getElementById("question1").value); // Happiness question
-            const q2Value = parseInt(document.getElementById("question2").value); // Energy question
-
-            // Check if both questions have been answered
-            if (isNaN(q1Value) || isNaN(q2Value)) {
-                alert("Please answer all the questions.");
-                return;
+        const assessments = [
+            {
+                name: "Амьдралын сэтгэл ханамж",
+                description: "Энэхүү үнэлгээ нь таны амьдралын ерөнхий сэтгэл ханамжийн түвшинг тодорхойлоход зориулагдсан.",
+                questions: [
+                    "1. Миний амьдралын ихэнх юм миний хүссэнээр байдаг.",
+                    "2. Миний амьдралын бүх зүйл сайхан байгаа.",
+                    "3. Би амьдралдаа аз жаргалтай байна.",
+                    "4. Би амьдралаас хүсэж байгаа зүйлүүдээ авч байгаа.",
+                    "5. Хэрэв би дахиж амьдрах бол энэ амьдралаараа л амьдарна."
+                ],
+                scale: [1, 2, 3, 4, 5],
+                scaleLabels: {
+                    1: "Огтхон ч санал нийлэхгүй байна", 
+                    2: "Бага зэрэг санал нийлэхгүй байна", 
+                    3: "Аль нь ч биш", 
+                    4: "Бага зэрэг санал нийлж байна", 
+                    5: "Бүрэн санал нийлж байна"
+                },
+                feedback: [
+                    { min: 5, max: 9, message: "Таны амьдралын сэтгэл ханамж сул түвшинд байна. Сэтгэл ханамжгүй байгаа зүйлсээ жагсааж аль нь таны амьдралд сөргөөр нөлөөлж байгааг тодорхойлох, тухайн зүйлийг хэрхэн өөрчилж чадах вэ, өөрчилснөөр та илүү аз жаргалтай байж чадах уу гэсэн асуултад хариулах; Бясалгал, талархлын дасгал тогтмол хийх; Бусадтай харилцах харилцаа холбоогоо сайжруулах; Жижиг бөгөөд богино хугацаанд хүрч болохуйц зорилго тавьж түүндээ хүрэх аргаар урам зоригоо нэмэгдүүлэх; Чанартай нойр авах, тэнцвэртэй эрүүл хооллох, тогтмол дасгал хөдөлгөө хийх зэргээр өөрийн эрч хүч, урам зориг, эерэг сэтгэл хөдлөлийг нэмэгдүүлээрэй." },
+                    { min: 10, max: 14, message: "Таны амьдралын сэтгэл ханамж дунд түвшинд байна. Бясалгал, талархлын дасгал тогтмол хийх;  Таны сонирхол, анхаарлыг татахуйц шинэ зүйл туршиж үзэх; Бусадтай харилцах харилцаа холбоогоо сайжруулах зэргээр амьдралын сэтгэл ханамжаа нэмэгдүүлэх арга ашиглаарай." },
+                    { min: 15, max: 25, message: "Таны амьдралын сэтгэл ханамж өндөр түвшинд байна." }
+                ]
+            },
+            {
+                name: "Өөртөө энэрэнгүй хандах чадвар",
+                description: "Заавар: Дараах асуумжид хариулахаасаа өмнө асуулт тус бүрийг анхааралтай уншаарай. Та асуулт тус бүрийг уншиж 1-5 оноогоор хэр олон удаа тухайн зүйлийг хийдэг болохоо сонгоорой.",
+                questions: [
+                    "1. Би заримдаа буруу юм хийхээрээ өөрийгөө буруутгаж голдог.",
+                    "2. Би өөрийнхөө сул талыг уучилдаг.",
+                    "3. Ямар нэг муу зүйл тохиолдоход зөвхөн тэр тухай бодоод байлгүй гоё юм бодохыг хичээдэг.",
+                    "4. Намайг гунигласан үед бусад хүүхдүүд надаас илүү жаргалтай байгаа юм шиг санагддаг.",
+                    "5. Би алдаа гаргасан үедээ бусад хүмүүс ч гэсэн бас алддаг даа гэж боддог.",
+                    "6. Надад муу юм тохиолдоход би өөрийгөө өрөвдөж хайрладаг.",
+                    "7. Би уурласан үедээ аль болох тайвшрахыг хичээдэг.",
+                    "8. Би чухал зүйл дээр бүтэлгүйтсэн үед ганцаараа үлдсэн мэт санагддаг.",
+                    "9. Гунигтай үед бүх зүйл болохгүй байгаа юм шиг санагддаг.",
+                    "10. Би юм хийж чадахгүй болохоороо бусад хүмүүст ч гэсэн чадахгүй зүйл бас байдаг шүү дээ гэж боддог.",
+                    "11. Би хийж чаддаггүй юмнуудаа бодохоор өөрийгөө загнамаар санагддаг.",
+                    "12. Би өөрийнхөө сул талыг бодохоор уур хүрдэг."
+                ],
+                scale: [1, 2, 3, 4, 5],
+                scaleLabels: {
+                    1: "Хэзээ ч хийдэггүй", 
+                    2: "Бараг л хийдэггүй", 
+                    3: "Хааяа л хийдэг", 
+                    4: "Ихэнхдээ хийдэг", 
+                    5: "Байнга хийдэг"
+                },
+                feedback: [
+                    { min: 1, max: 2.19, message: "Таны өөртөө энэрэнгүй хандах чадвар сул түвшинд байна. Иймд та: Алдаа дутагдлаа хүлээн зөвшөөрч өөртөө зөөлөн хандах; Бүх хүн бэрхшээлтэй цаг үеийн туулдаг гэдгийг санах; Танд дэмжлэг үзүүлж чадах хэн нэгэн байгааг санаж шаардлагатай үед бусдаас тусламж авах; Бясалгал, талархлын дасгал тогтмол хийх зэргээр өөртөө энэрэнгүй хандах чадвараа нэмэгдүүлээрэй." },
+                    { min: 2.5, max: 3.5, message: "Таны өөртөө энэрэнгүй хандах чадвар дунд түвшинд байна. Иймд та: Бясалгал, талархлын дасгал тогтмол хийх; Хүнд хэцүү цаг үедээ бусдаас дэмжлэг авах; Өөрийн алдаа дутагдлыг хүлээн зөвшөөрч бүх хүнд дутагдал байдаг гэдгийг санах; Өөрийгөө шүүмжлэхгүй байх зэргээр өөртөө энэрэнгүй хандах чадвараа нэмэгдүүлээрэй. " },
+                    { min: 3.51, max: 5, message: "Таны өөртөө энэрэнгүй хандах чадвар өндөр түвшинд байна. Энэ нь таныг хүнд хэцүү цаг туулж байхдаа өөрийгөө шүүмжлэхгүйгээр зөөлөн хандах, алдаа дутагдлаа хүлээн зөвшөөрөх, бүх хүнд хэцүү цаг үе тулгардаг гэдгийг санах, шаардлагатай үед өөрийгөө бусдаас тусгаарлахгүйгээр тусламж авах арга ашигладаг гэдгийг илтгэнэ." }
+                ]
+            },
+            {
+                name: "Сайн сайхан байдал",
+                description: "Заавар: Сүүлийн хоёр долоо хоногт мэдэрсэн мэдрэмжийг тань илтгэх хариултыг доорх таван асуулт тус бүрд сонгоорой. Өндөр оноо өгөх тусам сайн сайхан байдал их байгааг илтгэхийг анзаараарай. Жишээ нь: Хэрвээ та сүүлийн долоо хоногийн талаас илүү өдөрт нь баяртай, сайхан мэдрэмжтэй байсан бол баруун дээд буланд байгаа 3 гэсэн хариултыг дугуйлаарай.",
+                questions: [
+                    "1. Би хөгжилтэй, өөдрөг байсан.",
+                    "2. Би тайван, амгалан байсан.",
+                    "3. Би идэвхтэй, эрч хүчтэй байсан.",
+                    "4. Би сайн амарч сэргэг сэрсэн.",
+                    "5. Өнгөрсөн өдрүүд дуртай зүйлсээр маань дүүрэн байсан."
+                ],
+                scale: [0, 1, 2, 3, 4, 5],
+                scaleLabels: {
+                    0: "Огт үгүй",
+                    1: "Заримдаа", 
+                    2: "Талаас багад нь", 
+                    3: "Талаас илүүд нь", 
+                    4: "Ихэнхдээ", 
+                    5: "Байнга"
+                },
+                feedback: [
+                    { min: 0, max: 12, message: "Таны сэтгэл зүйн сайн сайхан байдал сул түвшинд байна. Үүнд дараах хүчин зүйл нөлөөлсөн байх боломжтой. Сэтгэл санааны ядралт (стресс, ядаргаанд орох, ажил эсвэл хичээлээс дарамт мэдрэх гэх мэт), Сэтгэцийн эрүүл мэндийн асуудал (сэтгэл гутрал, түгшүүрт автах гэх мэт), Бие махбодын эрүүл мэндийн асуудал (архаг өвчин, нойрны хямрал гэх мэт), Нийгмийн харилцаа холбоо дутмаг байх, Буруу амьдралын хэв маяг (буруу хооллолт, хөдөлгөөний дутагдал, архи, мансууруулах бодисын хамаарал гэх мэт). Иймд та дээрх хүчин зүйлсийг бууруулж өөрийн сэтгэл зүйн сайн сайхан байдлыг нэмэгдүүлээрэй." },
+                    { min: 13, max: 25, message: "Таны сэтгэл зүйн сайн сайхан байдал сайн түвшинд байна. Энэ нь танд сэтгэл ханамж, эрч хүч, урам зориг, өөдрөг үзэл их байгааг харуулна. Та сэтгэл зүйн сайн сайхан байдлаа тогтвортой байлгах зорилгоор бясалгал, талархлын дасгал, бие махбодын хөдөлгөөн зэргийг тогтмол хийвэл зохистой." },
+                ]
+            },
+            {
+                name: "Хүүхэд өсгөх хэв маяг",
+                description: "Заавар: Та асуулт тус бүрийг уншаад тухайн нөхцөл байдал таны гэрт хэр олон тохиолддогийг 1-5 онооны хариултаас сонгон дугуйлаарай.",
+                questions: [
+                    "1. Та хүүхдээ ямар нэг зүйл сайн хийж байгаа үед нь хэлдэг.",
+                    "2. Та хүүхдээ шийтгэнэ гэж сүрдүүлдэг ч эцэстээ шийтгэдэггүй.",
+                    "3. Таны хүүхэд хаашаа явж байгаа бичиж үлдээдэггүй эсвэл танд хэлдэггүй.",
+                    "4. Таны хүүхэд буруу зүйл хийснийхээ дараа таныг өөрийг нь шийтгэхгүй гэж ярьдаг.",
+                    "5. Таны хүүхэд гэртээ байх ёстой цагаасаа хойш орой гадаа байдаг.",
+                    "6. Та хүүхдээ ямар нэгэн зүйл сайн хийснийх нь дараа магтдаг.",
+                    "7. Та хүүхдээ бие зөв авч явбал магтдаг.",
+                    "8. Таны хүүхэд өөрийн тань мэдэхгүй найзуудтай гадуур гардаг.",
+                    "9. Та хүүхдээ шийтгэлээс нь эрт чөлөөлдөг (Жишээ нь: хязгаарлалтуудаа анх хэлж байснаасаа эрт цуцлах)."
+                ],
+                scale: [1, 2, 3, 4, 5],
+                scaleLabels: {
+                    1: "Хэзээ ч үгүй", 
+                    2: "Бараг үгүй", 
+                    3: "Хааяа", 
+                    4: "Үе үе", 
+                    5: "Байнга"
+                },
+                factors: {
+                    "Эерэг харилцаа холбоо": { items: [1, 6, 7], description: "Таны “Эерэг харилцаа холбоо” үзүүлэлтийн оноо өндөр гарсан байна. Энэ нь та хүүхдэдээ урам зориг, магтаал, эерэг хариу үйлдэл тогтмол үзүүлдгийг илтгэнэ." },
+                    "Тодорхой бус дэг журам": { items: [2, 4, 9], description: "Таны “Тодорхой бус дэг журам” үзүүлэлтийн оноо өндөр гарсан байна. Энэ нь таныг хүүхдэдээ анхааруулсан шийтгэлээ гэнэт биелүүлэхгүй байх (жишээ нь утсыг нь хураана гэж анхааруулсан ч хураахгүй байх), тогтоосон дүрмээ өөрөө зөрчих зэрэг үйлдэл гаргадгийг илтгэнэ. Энэ нь хүүхдэд тодорхойгүй байдал үүсгэдэг бөгөөд хүүхдийн зан үйлийн асуудал гаргах магадлалыг нэмэгдүүлдэг." },
+                    "Хангалтгүй дэмжлэг": { items: [3, 5, 8], description: "Таны “Хангалтгүй дэмжлэг” үзүүлэлтийн оноо өндөр гарсан байна. Энэ нь таныг хүүхдийнхээ хийж буй зүйлд хангалттай анхаарал, хяналт тавьдаггүйг илтгэх бөгөөд уг үл хайхрах байдал хэт их байх тусам хүүхдийн эрсдэлт зан үйл гаргах магадлал нэмэгддэг. Жишээ нь архи, согтууруулах ундаа, мөрийтэй тоглоомд автах гэх мэт." }
+                }
             }
+        ];
+        
+        let currentAssessment = 0;
+        let userResponses = [];
+        const reverseScoredItems = [1, 4, 8, 9, 11, 12]; // 1-based indices of reverse-scored items
 
-            // Calculate the total score (you can adjust this based on your logic)
-            const totalScore = q1Value + q2Value;
-
-            // Provide feedback based on the score
-            let feedback = "";
-            if (totalScore <= 3) {
-                feedback = "You're feeling quite low on energy and happiness. Try taking some time for self-care.";
-            } else if (totalScore <= 6) {
-                feedback = "You're doing okay but could benefit from some relaxation or a positive activity.";
-            } else if (totalScore <= 10) {
-                feedback = "You're feeling quite positive and energetic. Keep up the great work!";
+        function nextAssessment() {
+            if (currentAssessment < assessments.length) {
+                displayAssessment(assessments[currentAssessment]);
+            } else {
+                calculateResults();
             }
+        }
 
-            // Show the feedback in the 'feedback' div
-            document.getElementById("feedback").innerText = feedback;
-        });
+        function displayAssessment(assessment) {
+            let container = document.getElementById("assessment");
+            container.innerHTML = `<h2>${assessment.name}</h2>`;
+            container.innerHTML += `<p><em>${assessment.description}</em></p>`;
+
+            assessment.questions.forEach((question, index) => {
+                let questionHTML = `<div class='question'>
+                    <p>${question}</p>
+                    <div class="scale-options">`;
+                
+                assessment.scale.forEach(value => {
+                    let label = assessment.scaleLabels ? assessment.scaleLabels[value] || "" : "";
+                    questionHTML += `
+                        <label>
+                            <input type='radio' name='q${index}' value='${value}'> ${value} (${label})
+                        </label>
+                    `;
+                });
+
+                questionHTML += "</div></div>";
+                container.innerHTML += questionHTML;
+            });
+
+            container.innerHTML += `<button onclick="saveResponses()">Next</button>`;
+        }
+
+        function saveResponses() {
+            let assessment = assessments[currentAssessment];
+            let responses = [];
+
+            assessment.questions.forEach((_, index) => {
+                let selected = document.querySelector(`input[name='q${index}']:checked`);
+                if (selected) {
+                    let value = parseInt(selected.value);
+                    
+                    // Apply reverse scoring only for "Өөртөө энэрэнгүй хандах чадвар"
+                    if (assessment.name === "Өөртөө энэрэнгүй хандах чадвар" && reverseScoredItems.includes(index + 1)) {
+                        value = 6 - value; // Reverse scoring: 1→5, 2→4, 3→3, 4→2, 5→1
+                    }
+
+                    responses.push(value);
+                } else {
+                    responses.push(null); // Handle unanswered questions
+                }
+            });
+
+            userResponses.push({ name: assessment.name, scores: responses });
+
+            currentAssessment++;
+            nextAssessment();
+        }
+
+        function calculateResults() {
+            document.getElementById("assessment").classList.add("hidden");
+            let resultsContainer = document.getElementById("results");
+            resultsContainer.classList.remove("hidden");
+            resultsContainer.innerHTML = "<h2>Үнэлгээний дүн</h2>";
+
+            userResponses.forEach(assessment => {
+                let totalScore = assessment.scores.reduce((sum, value) => sum + (value !== null ? value : 0), 0);
+                let feedbackMessage = "";
+
+                // Feedback for "Амьдралын сэтгэл ханамж"
+                if (assessment.name === "Амьдралын сэтгэл ханамж") {
+                    if (totalScore >= 5 && totalScore <= 9) {
+                        feedbackMessage = "Таны амьдралын сэтгэл ханамж сул түвшинд байна. Сэтгэл ханамжгүй байгаа зүйлсээ жагсааж аль нь таны амьдралд сөргөөр нөлөөлж байгааг тодорхойлох, тухайн зүйлийг хэрхэн өөрчилж чадах вэ, өөрчилснөөр та илүү аз жаргалтай байж чадах уу гэсэн асуултад хариулах; Бясалгал, талархлын дасгал тогтмол хийх; Бусадтай харилцах харилцаа холбоогоо сайжруулах; Жижиг бөгөөд богино хугацаанд хүрч болохуйц зорилго тавьж түүндээ хүрэх аргаар урам зоригоо нэмэгдүүлэх; Чанартай нойр авах, тэнцвэртэй эрүүл хооллох, тогтмол дасгал хөдөлгөө хийх зэргээр өөрийн эрч хүч, урам зориг, эерэг сэтгэл хөдлөлийг нэмэгдүүлээрэй.";
+                    } else if (totalScore >= 10 && totalScore <= 14) {
+                        feedbackMessage = "Таны амьдралын сэтгэл ханамж дунд түвшинд байна. Бясалгал, талархлын дасгал тогтмол хийх;  Таны сонирхол, анхаарлыг татахуйц шинэ зүйл туршиж үзэх; Бусадтай харилцах харилцаа холбоогоо сайжруулах зэргээр амьдралын сэтгэл ханамжаа нэмэгдүүлэх арга ашиглаарай.";
+                    } else if (totalScore >= 15 && totalScore <= 25) {
+                        feedbackMessage = "Таны амьдралын сэтгэл ханамж өндөр түвшинд байна.";
+                    }
+                }
+
+                // Feedback for "Өөртөө энэрэнгүй хандах чадвар"
+                if (assessment.name === "Өөртөө энэрэнгүй хандах чадвар") {
+                    if (totalScore >= 12 && totalScore <= 27) {
+                        feedbackMessage = "Таны өөртөө энэрэнгүй хандах чадвар сул түвшинд байна. Иймд та: Алдаа дутагдлаа хүлээн зөвшөөрч өөртөө зөөлөн хандах; Бүх хүн бэрхшээлтэй цаг үеийн туулдаг гэдгийг санах; Танд дэмжлэг үзүүлж чадах хэн нэгэн байгааг санаж шаардлагатай үед бусдаас тусламж авах; Бясалгал, талархлын дасгал тогтмол хийх зэргээр өөртөө энэрэнгүй хандах чадвараа нэмэгдүүлээрэй.";
+                    } else if (totalScore >= 28 && totalScore <= 44) {
+                        feedbackMessage = "Таны өөртөө энэрэнгүй хандах чадвар дунд түвшинд байна. Иймд та: Бясалгал, талархлын дасгал тогтмол хийх; Хүнд хэцүү цаг үедээ бусдаас дэмжлэг авах; Өөрийн алдаа дутагдлыг хүлээн зөвшөөрч бүх хүнд дутагдал байдаг гэдгийг санах; Өөрийгөө шүүмжлэхгүй байх зэргээр өөртөө энэрэнгүй хандах чадвараа нэмэгдүүлээрэй. ";
+                    } else if (totalScore >= 45 && totalScore <= 60) {
+                        feedbackMessage = "Таны өөртөө энэрэнгүй хандах чадвар өндөр түвшинд байна. Энэ нь таныг хүнд хэцүү цаг туулж байхдаа өөрийгөө шүүмжлэхгүйгээр зөөлөн хандах, алдаа дутагдлаа хүлээн зөвшөөрөх, бүх хүнд хэцүү цаг үе тулгардаг гэдгийг санах, шаардлагатай үед өөрийгөө бусдаас тусгаарлахгүйгээр тусламж авах арга ашигладаг гэдгийг илтгэнэ.";
+                    }
+                }
+
+                // Feedback for "Сайн сайхан байдал"
+                if (assessment.name === "Сайн сайхан байдал") {
+                    if (totalScore >= 0 && totalScore <= 12) {
+                        feedbackMessage = "Таны сэтгэл зүйн сайн сайхан байдал сул түвшинд байна. Үүнд дараах хүчин зүйл нөлөөлсөн байх боломжтой. Сэтгэл санааны ядралт (стресс, ядаргаанд орох, ажил эсвэл хичээлээс дарамт мэдрэх гэх мэт), Сэтгэцийн эрүүл мэндийн асуудал (сэтгэл гутрал, түгшүүрт автах гэх мэт), Бие махбодын эрүүл мэндийн асуудал (архаг өвчин, нойрны хямрал гэх мэт), Нийгмийн харилцаа холбоо дутмаг байх, Буруу амьдралын хэв маяг (буруу хооллолт, хөдөлгөөний дутагдал, архи, мансууруулах бодисын хамаарал гэх мэт). Иймд та дээрх хүчин зүйлсийг бууруулж өөрийн сэтгэл зүйн сайн сайхан байдлыг нэмэгдүүлээрэй.";
+                    } else if (totalScore >= 13 && totalScore <= 25) {
+                        feedbackMessage = "Таны сэтгэл зүйн сайн сайхан байдал сайн түвшинд байна. Энэ нь танд сэтгэл ханамж, эрч хүч, урам зориг, өөдрөг үзэл их байгааг харуулна. Та сэтгэл зүйн сайн сайхан байдлаа тогтвортой байлгах зорилгоор бясалгал, талархлын дасгал, бие махбодын хөдөлгөөн зэргийг тогтмол хийвэл зохистой.";
+                    }
+                }
+
+                resultsContainer.innerHTML += `<p><strong>${assessment.name}:</strong> ${totalScore}</p>`;
+                if (feedbackMessage) {
+                    resultsContainer.innerHTML += `<p><em>${feedbackMessage}</em></p>`;
+                }
+
+                // Feedback for "Хүүхэд өсгөх хэв маяг"
+                if (assessment.name === "Хүүхэд өсгөх хэв маяг") {
+                    let parentingStyles = {
+                        "Эерэг харилцаа холбоо": { score: 0, questions: [0, 5, 6] }, 
+                        "Тодорхой бус дэг журам": { score: 0, questions: [1, 3, 8] },
+                        "Хангалтгүй дэмжлэг": { score: 0, questions: [2, 4, 7] }
+                    };
+
+                    // Calculate scores for each factor
+                    for (let style in parentingStyles) {
+                        parentingStyles[style].score = parentingStyles[style].questions.reduce(
+                            (sum, index) => sum + (assessment.scores[index] || 0),
+                            0
+                        );
+                    }
+
+                    // Find the highest scored factor
+                    let highestStyle = Object.keys(parentingStyles).reduce((a, b) =>
+                        parentingStyles[a].score > parentingStyles[b].score ? a : b
+                    );
+
+                    let highestScore = parentingStyles[highestStyle].score;
+
+                    // Provide feedback based on highest scored factor
+                    let parentingFeedback = {
+                        "Эерэг харилцаа холбоо": "Та хүүхдээ чөлөөтэй өсгөх хандлагатай байна. Гэхдээ заримдаа хязгаар тогтоох нь чухал байж магадгүй.",
+                        "Тодорхой бус дэг журам": "Та хүүхдээ хайрлаж, халамжлах хандлагатай байна. Энэ нь хүүхдийн сэтгэл санааны байдлыг сайжруулж чадна.",
+                        "Хангалтгүй дэмжлэг": "Та хүүхдээ хатуу хяналтад байлгах хандлагатай байна. Хэтэрхий хатуу байх нь хүүхдэд сөрөг нөлөө үзүүлж болзошгүй тул тэнцвэртэй байгаарай."
+                    };
+
+                    resultsContainer.innerHTML += `<p><strong>Таны хүүхэд өсгөх хэв маяг:</strong> ${highestStyle} (Оноо: ${highestScore})</p>`;
+                    resultsContainer.innerHTML += `<p><em>${parentingFeedback[highestStyle]}</em></p>`;
+                } 
+            });
+
+            resultsContainer.innerHTML += "<p>Үнэлгээ дууслаа.</p>";
+        }
+
+        nextAssessment();
+
     </script>
-
 </body>
 </html>

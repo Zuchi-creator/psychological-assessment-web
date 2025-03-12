@@ -29,6 +29,7 @@
         <h1>Сэтгэл зүйн үнэлгээ</h1>
         <div id="assessment"></div>
         <div id="results" class="hidden"></div>
+        <button id="restartButton" class="hidden" onclick="restartAssessment()">Дахин эхлэх</button>
     </div>
     
     <script>
@@ -177,7 +178,7 @@
                 container.innerHTML += questionHTML;
             });
 
-            container.innerHTML += `<button onclick="saveResponses()">Next</button>`;
+            container.innerHTML += `<button onclick="saveResponses()">Дараах</button>`;
         }
 
         function saveResponses() {
@@ -203,6 +204,15 @@
             userResponses.push({ name: assessment.name, scores: responses });
 
             currentAssessment++;
+            nextAssessment();
+        }
+        
+        function restartAssessment() {
+            currentAssessment = 0;
+            userResponses = [];
+            document.getElementById("results").classList.add("hidden");
+            document.getElementById("restartButton").classList.add("hidden");
+            document.getElementById("assessment").classList.remove("hidden");
             nextAssessment();
         }
 
@@ -288,6 +298,7 @@
             });
 
             resultsContainer.innerHTML += "<p>Үнэлгээ дууслаа.</p>";
+            document.getElementById("restartButton").classList.remove("hidden");
         }
 
         nextAssessment();
